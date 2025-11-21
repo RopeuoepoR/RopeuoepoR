@@ -1,0 +1,81 @@
+:root{
+  --pink: #ffe4e6;
+  --lightblue: #e0f2fe;
+  --darkblue: #0c1a3a;
+  --main: #ff6b00;
+  --radius: 10px;
+  --shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+*{
+  margin:0;padding:0;box-sizing:border-box;
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+body{
+  background: var(--lightblue);
+  color: #222;
+  line-height: 1.6;
+}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block;border-radius:var(--radius)}
+iframe{width:100%;height:240px;border:0;border-radius:var(--radius)}
+
+/* ===== 导航 ===== */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  background:#fff;box-shadow:var(--shadow);z-index:999;
+  display:flex;align-items:center;padding:0 20px;height:60px
+}
+.nav-logo{font-size:1.2rem;font-weight:700;color:var(--main)}
+.hamburger{margin-left:auto;font-size:1.5rem;cursor:pointer}
+.nav-menu{
+  position:absolute;top:60px;right:20px;background:#fff;
+  box-shadow:var(--shadow);border-radius:var(--radius);
+  display:none;flex-direction:column;padding:10px 0;min-width:160px
+}
+.nav-menu.show{display:flex}
+.nav-menu a{padding:10px 20px}
+.nav-menu a:hover{background:var(--pink)}
+
+/* ===== 主页粉背景区 ===== */
+.hero-pink{
+  background:var(--pink) url('../img/bg-pink.jpg') center/cover no-repeat;
+  text-align:center;padding:80px 20px 60px
+}
+.hero-pink h1{font-size:2.8rem;margin-bottom:10px}
+.hero-pink h2{font-size:1.2rem;color:#666;font-weight:400}
+#timer{font-size:1.1rem;margin-top:15px;color:#444}
+
+/* ===== 板块区 ===== */
+.cards{
+  display:flex;flex-wrap:wrap;gap:25px;justify-content:center;padding:60px 20px
+}
+.card{
+  background:#fff url('../img/bg-lightblue.jpg') center/cover no-repeat;
+  width:280px;height:120px;border-radius:var(--radius);
+  box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:700;transition:.3s
+}
+.card:hover{transform:translateY(-5px)}
+.sub-cards{display:flex;gap:15px;margin-top:15px}
+.sub-card{background:rgba(255,255,255,.85);padding:10px 20px;border-radius:var(--radius);font-size:1rem}
+
+/* ===== 子页统一 ===== */
+.section{padding:40px 20px;max-width:900px;margin:auto}
+.section-title{font-size:1.8rem;margin-bottom:20px}
+.back-btn{position:fixed;bottom:20px;left:20px;background:var(--main);color:#fff;padding:8px 16px;border-radius:var(--radius);box-shadow:var(--shadow)}
+
+/* ===== 注册/登录页 ===== */
+.auth-box{background:#fff;padding:30px;border-radius:var(--radius);box-shadow:var(--shadow);max-width:400px;margin:auto}
+.auth-box h2{margin-bottom:20px;text-align:center}
+.auth-box input{width:100%;padding:10px;margin-bottom:15px;border:1px solid #ccc;border-radius:var(--radius)}
+.auth-box button{width:100%;padding:10px;background:var(--main);color:#fff;border:0;border-radius:var(--radius);cursor:pointer}
+.auth-box p{text-align:center;margin-top:10px;font-size:.9rem}
+
+/* ===== 广告页 ===== */
+.ad-header,.ad-footer{background:var(--darkblue);color:#fff;padding:10px;text-align:center;font-size:.85rem}
+.ad-btn{display:inline-block;background:var(--main);color:#fff;padding:12px 24px;border-radius:var(--radius);margin:20px 0;font-size:1rem}
+
+/* ===== 页脚 ===== */
+footer{background:var(--darkblue);color:#fff;text-align:center;padding:15px;font-size:.85rem}
+footer a{color:#ffb366}
+.card{border-radius:20px}

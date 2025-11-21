@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>RopeuoepoR的网站</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{
+      --pink: #ffe4e6;
+      --lightblue: #e0f2fe;
+      --darkblue: #0c1a3a;
+      --main: #ff6b00;
+      --radius: 10px;
+      --shadow: 0 4px 12px rgba(0,0,0,.15);
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+    body{background:var(--lightblue);color:#222;line-height:1.6}
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block;border-radius:var(--radius)}
+    iframe{width:100%;height:240px;border:0;border-radius:var(--radius)}
+
+    /* 导航 */
+    nav{position:fixed;top:0;left:0;right:0;background:#fff;box-shadow:var(--shadow);z-index:999;display:flex;align-items:center;padding:0 20px;height:60px}
+    .nav-logo{font-size:1.2rem;font-weight:700;color:var(--main)}
+    .hamburger{margin-left:auto;font-size:1.5rem;cursor:pointer}
+    .nav-menu{position:absolute;top:60px;right:20px;background:#fff;box-shadow:var(--shadow);border-radius:var(--radius);display:none;flex-direction:column;padding:10px 0;min-width:160px}
+    .nav-menu.show{display:flex}
+    .nav-menu a{padding:10px 20px}
+    .nav-menu a:hover{background:var(--pink)}
+
+    /* 粉背景主副标题+计时器 */
+    .hero-pink{background:var(--pink) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ffe4e6"/><path d="M0 0L100 100M100 0L0 100" stroke="%23ff6b00" stroke-width="1"/></svg>');text-align:center;padding:80px 20px 60px}
+    .hero-pink h1{font-size:2.8rem;margin-bottom:10px}
+    .hero-pink h2{font-size:1.2rem;color:#666;font-weight:400}
+    #timer{font-size:1.1rem;margin-top:15px;color:#444}
+
+    /* 五大板块大按钮（无子按钮） */
+    .cards{display:flex;flex-wrap:wrap;gap:25px;justify-content:center;padding:60px 20px}
+    .card{background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23e0f2fe"/><path d="M0 0L100 100M100 0L0 100" stroke="%23ff6b00" stroke-width="1"/></svg>');width:280px;height:120px;border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;transition:.3s}
+    .card:hover{transform:translateY(-5px)}
+
+    /* 页脚 */
+    footer{background:var(--darkblue);color:#fff;text-align:center;padding:15px;font-size:.85rem}
+    footer a{color:#ffb366}
+
+    /* 手机适配 */
+    @media(max-width:768px){.cards{flex-direction:column;align-items:center}}
+  </style>
+</head>
+<body>
+  <!-- 导航 -->
+  <nav>
+    <div class="nav-logo">RopeuoepoR</div>
+    <div class="hamburger"><i class="fas fa-bars"></i></div>
+    <div class="nav-menu">
+      <a href="register.html">注册账号</a>
+      <a href="login.html">登录账号</a>
+      <a href="about.html">关于Rope</a>
+      <a href="get-mc/index.html">获取麦块</a>
+      <a href="get-server/index.html">获取伺服器</a>
+      <a href="support/index.html">支持Rope</a>
+      <a href="guestbook.html">留言板</a>
+    </div>
+  </nav>
+
+  <!-- 粉背景主副标题+计时器 -->
+  <section class="hero-pink">
+    <h1>欢迎来倒RopeuoepoR的网站</h1>
+    <h2>Welcome to RopeuoepoR's Website</h2>
+    <div id="timer">网站已经存在了 0年0天0小时0分钟0秒</div>
+  </section>
+
+  <!-- 五大板块大按钮（无子按钮） -->
+  <section class="cards">
+    <a class="card" href="about.html">关于Rope</a>
+    <a class="card" href="get-mc/index.html">获取麦块</a>
+    <a class="card" href="get-server/index.html">获取伺服器</a>
+    <a class="card" href="support/index.html">支持Rope</a>
+    <a class="card" href="guestbook.html">留言板</a>
+  </section>
+
+  <!-- 页脚 -->
+  <footer>
+    <p>所有版权都归Rope所有</p>
+    <p>
+      <a href="https://space.bilibili.com/3546816293374453" target="_blank">哔哩哔哩</a> |
+      <a href="https://https://www.youtube.com/@RopeuoepoR" target="_blank">YouTube</a> |
+      <a href="https://x.com/RopeuoepoR" target="_blank">推特</a> |
+      <a href="https://https://www.kuaishou.com/profile/3x6kekpdwp8hrau" target="_blank">快手</a>
+    </p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script>
+    // 导航开关
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu   = document.querySelector('.nav-menu');
+    hamburger.addEventListener('click', () => navMenu.classList.toggle('show'));
+
+    // 计时器（2025-11-07 00:00:00 起算）
+    const start = new Date('2025-11-07T00:00:00');
+    const timer = document.getElementById('timer');
+    setInterval(() => {
+      const diff = Math.floor((Date.now() - start) / 1000);
+      const y = Math.floor(diff / (3600 * 24 * 365));
+      const d = Math.floor((diff % (3600 * 24 * 365)) / (3600 * 24));
+      const h = Math.floor((diff % (3600 * 24)) / 3600);
+      const m = Math.floor((diff % 3600) / 60);
+      const s = diff % 60;
+      timer.textContent = `网站已经存在了 ${y}年${d}天${h}小时${m}分钟${s}秒`;
+    }, 1000);
+  </script>
+</body>
+</html>
