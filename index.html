@@ -2,6 +2,8 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <!-- 关键适配标签：确保手机端正确缩放 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>RopeuoepoR的网站</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -12,43 +14,188 @@
       --main: #ff6b00;
       --radius: 10px;
       --shadow: 0 4px 12px rgba(0,0,0,.15);
+      --shadow-hover: 0 6px 20px rgba(0,0,0,.2);
     }
-    *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
-    body{background:var(--lightblue);color:#222;line-height:1.6}
-    a{text-decoration:none;color:inherit}
-    img{max-width:100%;display:block;border-radius:var(--radius)}
-    iframe{width:100%;height:240px;border:0;border-radius:var(--radius)}
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      /* 保留原字体，仅优化字体渲染 */
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body{
+      background: var(--lightblue);
+      color: #222;
+      line-height: 1.6;
+      /* 防止固定导航遮挡内容 */
+      padding-top: 60px;
+    }
+    a{
+      text-decoration: none;
+      color: inherit;
+    }
+    img{
+      max-width: 100%;
+      display: block;
+      border-radius: var(--radius);
+    }
+    iframe{
+      width: 100%;
+      height: 240px;
+      border: 0;
+      border-radius: var(--radius);
+    }
 
-    /* 导航 */
-    nav{position:fixed;top:0;left:0;right:0;background:#fff;box-shadow:var(--shadow);z-index:999;display:flex;align-items:center;padding:0 20px;height:60px}
-    .nav-logo{font-size:1.2rem;font-weight:700;color:var(--main)}
-    .hamburger{margin-left:auto;font-size:1.5rem;cursor:pointer}
-    .nav-menu{position:absolute;top:60px;right:20px;background:#fff;box-shadow:var(--shadow);border-radius:var(--radius);display:none;flex-direction:column;padding:10px 0;min-width:160px}
-    .nav-menu.show{display:flex}
-    .nav-menu a{padding:10px 20px}
-    .nav-menu a:hover{background:var(--pink)}
+    /* 导航 - 优化适配，保留原功能 */
+    nav{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      box-shadow: var(--shadow);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      height: 60px;
+      /* 防止手机端导航溢出 */
+      width: 100%;
+    }
+    .nav-logo{
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--main);
+    }
+    .hamburger{
+      margin-left: auto;
+      font-size: 1.5rem;
+      cursor: pointer;
+      /* 增加点击区域 */
+      padding: 5px;
+    }
+    .nav-menu{
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      display: none;
+      flex-direction: column;
+      padding: 10px 0;
+      min-width: 160px;
+      /* 手机端菜单层级和适配 */
+      max-width: calc(100vw - 40px);
+    }
+    .nav-menu.show{
+      display: flex;
+    }
+    .nav-menu a{
+      padding: 10px 20px;
+    }
+    .nav-menu a:hover{
+      background: var(--pink);
+    }
 
-    /* 粉背景主副标题+计时器 */
-    .hero-pink{background:var(--pink) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ffe4e6"/><path d="M0 0L100 100M100 0L0 100" stroke="%23ff6b00" stroke-width="1"/></svg>');text-align:center;padding:80px 20px 60px}
-    .hero-pink h1{font-size:2.8rem;margin-bottom:10px}
-    .hero-pink h2{font-size:1.2rem;color:#666;font-weight:400}
-    #timer{font-size:1.1rem;margin-top:15px;color:#444}
+    /* 粉背景区域 - 强化视觉，保留所有原内容 */
+    .hero-pink{
+      background: var(--pink) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ffe4e6"/><path d="M0 0L100 100M100 0L0 100" stroke="%23ff6b00" stroke-width="1"/></svg>');
+      text-align: center;
+      padding: 80px 20px 60px;
+      /* 增加内边距适配手机 */
+      padding: clamp(60px, 20vw, 80px) 20px clamp(40px, 10vw, 60px);
+      /* 增加圆角和阴影，提升美观 */
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+    .hero-pink h1{
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      margin-bottom: 10px;
+    }
+    .hero-pink h2{
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      color: #666;
+      font-weight: 400;
+    }
+    #timer{
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      margin-top: 15px;
+      color: #444;
+      /* 计时器美化：增加背景和圆角 */
+      background: rgba(255,255,255,0.7);
+      padding: 8px 15px;
+      border-radius: 20px;
+      display: inline-block;
+    }
 
-    /* 五大板块大按钮（无子按钮） */
-    .cards{display:flex;flex-wrap:wrap;gap:25px;justify-content:center;padding:60px 20px}
-    .card{background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23e0f2fe"/><path d="M0 0L100 100M100 0L0 100" stroke="%23ff6b00" stroke-width="1"/></svg>');width:280px;height:120px;border-radius:var(--radius);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;transition:.3s}
-    .card:hover{transform:translateY(-5px)}
+    /* 按钮板块 - 优化PC/手机适配，新增小游戏入口 */
+    .cards{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 25px;
+      justify-content: center;
+      padding: 0 20px 60px;
+      /* 限制PC端最大宽度，避免按钮过散 */
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card{
+      background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23e0f2fe"/><path d="M0 0L100 100M100 0L0 100" stroke="%23ff6b00" stroke-width="1"/></svg>');
+      /* 适配不同屏幕的按钮大小 */
+      width: clamp(220px, 50vw, 280px);
+      height: clamp(100px, 20vw, 120px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    .card:hover{
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+      background-color: #fafafa;
+    }
 
-    /* 页脚 */
-    footer{background:var(--darkblue);color:#fff;text-align:center;padding:15px;font-size:.85rem}
-    footer a{color:#ffb366}
+    /* 页脚 - 优化适配 */
+    footer{
+      background: var(--darkblue);
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      font-size: .85rem;
+      /* 手机端避免内容挤压 */
+      padding: clamp(15px, 5vw, 25px);
+    }
+    footer a{
+      color: #ffb366;
+    }
+    footer a:hover{
+      text-decoration: underline;
+    }
 
-    /* 手机适配 */
-    @media(max-width:768px){.cards{flex-direction:column;align-items:center}}
+    /* 手机端适配 - 精准调整 */
+    @media(max-width:768px){
+      .nav-menu{
+        right: 10px;
+      }
+      .cards{
+        gap: 20px;
+      }
+      .hero-pink{
+        padding: clamp(50px, 15vw, 70px) 15px clamp(30px, 8vw, 50px);
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- 导航 -->
+  <!-- 导航 - 新增小游戏入口，内容不变 -->
   <nav>
     <div class="nav-logo">RopeuoepoR</div>
     <div class="hamburger"><i class="fas fa-bars"></i></div>
@@ -60,44 +207,46 @@
       <a href="get-server/index.html">获取伺服器</a>
       <a href="support/index.html">支持Rope</a>
       <a href="guestbook.html">留言板</a>
+      <a href="games.html">小游戏</a>
     </div>
   </nav>
 
-  <!-- 粉背景主副标题+计时器 -->
+  <!-- 粉背景区域 - 完全保留原内容，包括计时器 -->
   <section class="hero-pink">
     <h1>欢迎来倒RopeuoepoR的网站</h1>
     <h2>Welcome to RopeuoepoR's Website</h2>
     <div id="timer">网站已经存在了 0年0天0小时0分钟0秒</div>
   </section>
 
-  <!-- 五大板块大按钮（无子按钮） -->
+  <!-- 按钮板块 - 新增小游戏入口，内容不变 -->
   <section class="cards">
     <a class="card" href="about.html">关于Rope</a>
     <a class="card" href="get-mc/index.html">获取麦块</a>
     <a class="card" href="get-server/index.html">获取伺服器</a>
     <a class="card" href="support/index.html">支持Rope</a>
     <a class="card" href="guestbook.html">留言板</a>
+    <a class="card" href="games.html">小游戏</a>
   </section>
 
-  <!-- 页脚 -->
+  <!-- 页脚 - 修正原链接错误，内容不变 -->
   <footer>
     <p>所有版权都归Rope所有</p>
     <p>
       <a href="https://space.bilibili.com/3546816293374453" target="_blank">哔哩哔哩</a> |
-      <a href="https://https://www.youtube.com/@RopeuoepoR" target="_blank">YouTube</a> |
+      <a href="https://www.youtube.com/@RopeuoepoR" target="_blank">YouTube</a> |
       <a href="https://x.com/RopeuoepoR" target="_blank">推特</a> |
-      <a href="https://https://www.kuaishou.com/profile/3x6kekpdwp8hrau" target="_blank">快手</a>
+      <a href="https://www.kuaishou.com/profile/3x6kekpdwp8hrau" target="_blank">快手</a>
     </p>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script>
-    // 导航开关
+    // 导航开关 - 保留原代码
     const hamburger = document.querySelector('.hamburger');
     const navMenu   = document.querySelector('.nav-menu');
     hamburger.addEventListener('click', () => navMenu.classList.toggle('show'));
 
-    // 计时器（2025-11-07 00:00:00 起算）
+    // 计时器 - 完全保留原代码，时间计算不变
     const start = new Date('2025-11-07T00:00:00');
     const timer = document.getElementById('timer');
     setInterval(() => {
@@ -112,3 +261,5 @@
   </script>
 </body>
 </html>
+
+
