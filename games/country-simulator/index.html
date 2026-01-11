@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国家领土模拟器 - Rope的小游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 20px;
+        }
+
+        /* 导航栏：与网站风格统一 */
+        .game-nav {
+            background-color: #2c3e50;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+        }
+        .game-nav h2 {
+            color: #ffd700;
+            font-size: 1.5rem;
+        }
+        .back-to-menu {
+            padding: 0.6rem 1.2rem;
+            background-color: #e74c3c;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .back-to-menu:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid #ffd700;
+            border-radius: 0 0 12px 12px;
+            margin: 0 5% 20px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        /* 响应式容器：适配手机端 */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 0 5%;
+            margin: 0 auto;
+            max-width: 1400px;
+        }
+
+        /* 手机端适配：左右面板上下排列 */
+        @media (min-width: 768px) {
+            .game-container {
+                flex-direction: row;
+                height: calc(100vh - 220px);
+            }
+        }
+
+        .left-panel {
+            width: 100%;
+            max-width: 280px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #ffd700;
+            margin: 0 auto;
+        }
+
+        .control-btn {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .main-game {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            position: relative;
+            border: 2px solid #ffd700;
+            min-height: 500px;
+            padding: 20px;
+        }
+
+        .resources-bar {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 30px;
+            border-radius: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            border: 1px solid #ffd700;
+            z-index: 10;
+        }
+
+        .resource-item {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .resource-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .game-map {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding-top: 100px;
+        }
+
+        .country-display {
+            text-align: center;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            transition: all 0.3s ease;
+        }
+
+        .country-display:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(255,215,0,0.2);
+        }
+
+        .event-log {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            max-width: 100%;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #ffd700;
+            overflow-y: auto;
+        }
+
+        .event-log::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .event-log::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 3px;
+        }
+
+        .event-item {
+            margin: 5px 0;
+            padding: 8px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 5px;
+            font-size: 12px;
+            border-left: 3px solid #ffd700;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #ffd700;
+            width: 90%;
+            max-width: 450px;
+        }
+
+        .modal h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffd700;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ffec3d;
+            box-shadow: 0 0 0 3px rgba(255,215,0,0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #ffd700;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background: #ffec3d;
+        }
+
+        .btn-secondary {
+            background: #666;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #777;
+        }
+
+        .country-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            display: inline-block;
+            margin: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .country-color:hover {
+            transform: scale(1.1);
+        }
+
+        .diplomacy-panel {
+            display: none;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #ffd700;
+        }
+
+        .country-relation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .relation-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .relation-friendly { background: #27ae60; }
+        .relation-neutral { background: #f39c12; }
+        .relation-hostile { background: #e74c3c; }
+
+        .hack-menu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ff0000;
+            z-index: 20;
+        }
+
+        .hack-btn {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .hack-btn:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <!-- 新增游戏导航栏：返回小游戏菜单 -->
+    <div class="game-nav">
+        <h2>国家领土模拟器</h2>
+        <a href="../game-index.html" class="back-to-menu">返回小游戏菜单</a>
+    </div>
+
+    <div class="header">
+        <h1>国家领土模拟器 - 完整版</h1>
+    </div>
+
+    <div class="game-container">
+        <div class="left-panel">
+            <button class="control-btn" onclick="buildCity()">建造城市</button>
+            <button class="control-btn" onclick="recruitArmy()">招募军队</button>
+            <button class="control-btn" onclick="openDiplomacy()">外交</button>
+            <button class="control-btn" onclick="buyTerritory()">购买领土</button>
+            <button class="control-btn" onclick="nextTurn()">下一回合</button>
+            
+            <div class="diplomacy-panel" id="diplomacyPanel">
+                <h3 style="color: #ffd700; margin-bottom: 10px; text-align: center;">外交关系</h3>
+                <div id="diplomacyList"></div>
+            </div>
+        </div>
+
+        <div class="main-game">
+            <div class="resources-bar">
+                <div class="resource-item">
+                    <div>金币</div>
+                    <div class="resource-value" id="gold">1000</div>
+                </div>
+                <div class="resource-item">
+                    <div>人口</div>
+                    <div class="resource-value" id="population">100</div>
+                </div>
+                <div class="resource-item">
+                    <div>军队</div>
+                    <div class="resource-value" id="army">50</div>
+                </div>
+                <div class="resource-item">
+                    <div>幸福度</div>
+                    <div class="resource-value" id="happiness">75%</div>
+                </div>
+            </div>
+
+            <div class="game-map">
+                <div class="country-display" id="countryDisplay">
+                    <h2 id="countryName">未建立国家</h2>
+                    <p id="capitalName">请创建您的国家</p>
+                    <div id="countryColorDisplay"></div>
+                </div>
+            </div>
+
+            <div class="hack-menu">
+                <div style="color: #ff0000; font-size: 12px; margin-bottom: 5px; text-align: center;">破解菜单</div>
+                <button class="hack-btn" onclick="hackGold()">+1000金币</button>
+                <button class="hack-btn" onclick="hackArmy()">+100军队</button>
+                <button class="hack-btn" onclick="hackPopulation()">+500人口</button>
+            </div>
+
+            <div class="event-log" id="eventLog">
+                <div style="color: #ffd700; font-weight: bold; margin-bottom: 10px;">事件日志</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 国家创建模态窗口 -->
+    <div class="modal" id="createCountryModal">
+        <div class="modal-content">
+            <h2>创建您的国家</h2>
+            <div class="form-group">
+                <label>国家名称:</label>
+                <input type="text" id="newCountryName" placeholder="输入国家名称">
+            </div>
+            <div class="form-group">
+                <label>首都名称:</label>
+                <input type="text" id="newCapitalName" placeholder="输入首都名称">
+            </div>
+            <div class="form-group">
+                <label>国家颜色:</label>
+                <div>
+                    <span class="country-color" style="background: #ff0000" onclick="selectColor('#ff0000')"></span>
+                    <span class="country-color" style="background: #00ff00" onclick="selectColor('#00ff00')"></span>
+                    <span class="country-color" style="background: #0000ff" onclick="selectColor('#0000ff')"></span>
+                    <span class="country-color" style="background: #ffff00" onclick="selectColor('#ffff00')"></span>
+                    <span class="country-color" style="background: #ff00ff" onclick="selectColor('#ff00ff')"></span>
+                    <span class="country-color" style="background: #00ffff" onclick="selectColor('#00ffff')"></span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="createCountry()">创建国家</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 外交模态窗口 -->
+    <div class="modal" id="diplomacyModal">
+        <div class="modal-content">
+            <h2>外交关系</h2>
+            <div id="diplomacyContent"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeDiplomacy()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        let gameState = {
+            countryName: '',
+            capitalName: '',
+            countryColor: '#ff0000',
+            gold: 1000,
+            population: 100,
+            army: 50,
+            happiness: 75,
+            turn: 1,
+            cities: 1,
+            diplomacy: {
+                '邻国A': { relation: 'friendly', status: '盟友' },
+                '邻国B': { relation: 'neutral', status: '中立' },
+                '邻国C': { relation: 'hostile', status: '敌对' }
+            }
+        };
+
+        // 初始化游戏
+        window.onload = function() {
+            document.getElementById('createCountryModal').style.display = 'block';
+            updateDisplay();
+        };
+
+        // 选择国家颜色
+        function selectColor(color) {
+            gameState.countryColor = color;
+            document.querySelectorAll('.country-color').forEach(el => {
+                el.style.border = el.style.background === color ? '3px solid #fff' : '2px solid #fff';
+            });
+        }
+
+        // 创建国家
+        function createCountry() {
+            const countryName = document.getElementById('newCountryName').value;
+            const capitalName = document.getElementById('newCapitalName').value;
+
+            if (!countryName || !capitalName) {
+                alert('请填写完整信息！');
+                return;
+            }
+
+            gameState.countryName = countryName;
+            gameState.capitalName = capitalName;
+
+            document.getElementById('countryName').textContent = countryName;
+            document.getElementById('capitalName').textContent = '首都: ' + capitalName;
+            document.getElementById('countryColorDisplay').innerHTML = 
+                `<div class="country-color" style="background: ${gameState.countryColor}; width: 50px; height: 50px;"></div>`;
+
+            document.getElementById('createCountryModal').style.display = 'none';
+            addEvent(`🎉 国家 ${countryName} 成立！首都 ${capitalName} 建立！`);
+        }
+
+        // 更新显示
+        function updateDisplay() {
+            document.getElementById('gold').textContent = gameState.gold;
+            document.getElementById('population').textContent = gameState.population;
+            document.getElementById('army').textContent = gameState.army;
+            document.getElementById('happiness').textContent = gameState.happiness + '%';
+        }
+
+        // 建造城市
+        function buildCity() {
+            if (!gameState.countryName) {
+                alert('请先创建国家！');
+                return;
+            }
+
+            if (gameState.gold >= 500) {
+                gameState.gold -= 500;
+                gameState.cities += 1;
+                gameState.population += 50;
+                gameState.happiness = Math.min(100, gameState.happiness + 5);
+                updateDisplay();
+                addEvent(`🏙️ 新城市建立！人口增加50，幸福度提升。`);
+            } else {
+                addEvent(`❌ 金币不足，无法建造城市。`);
+            }
+        }
+
+        // 招募军队
+        function recruitArmy() {
+            if (!gameState.countryName) {
+                alert('请先创建国家！');
+                return;
+            }
+
+            if (gameState.gold >= 200 && gameState.population >= 10) {
+                gameState.gold -= 200;
+                gameState.population -= 10;
+                gameState.army += 20;
+                gameState.happiness = Math.max(0, gameState.happiness - 2);
+                updateDisplay();
+                addEvent(`⚔️ 招募了20名士兵！`);
+            } else {
+                addEvent(`❌ 资源不足，无法招募军队。`);
+            }
+        }
+
+        // 购买领土
+        function buyTerritory() {
+            if (!gameState.countryName) {
+                alert('请先创建国家！');
+                return;
+            }
+
+            if (gameState.gold >= 1000) {
+                gameState.gold -= 1000;
+                gameState.population += 100;
+                gameState.happiness = Math.min(100, gameState.happiness + 10);
+                updateDisplay();
+                addEvent(`🗺️ 成功购买新领土！人口增加100。`);
+            } else {
+                addEvent(`❌ 金币不足，无法购买领土。`);
+            }
+        }
+
+        // 打开外交
+        function openDiplomacy() {
+            if (!gameState.countryName) {
+                alert('请先创建国家！');
+                return;
+            }
+
+            const diplomacyPanel = document.getElementById('diplomacyPanel');
+            diplomacyPanel.style.display = diplomacyPanel.style.display === 'none' ? 'block' : 'none';
+
+            if (diplomacyPanel.style.display === 'block') {
+                updateDiplomacyPanel();
+            }
+        }
+
+        // 更新外交面板
+        function updateDiplomacyPanel() {
+            const diplomacyList = document.getElementById('diplomacyList');
+            diplomacyList.innerHTML = '';
+
+            for (const [country, info] of Object.entries(gameState.diplomacy)) {
+                const relationDiv = document.createElement('div');
+                relationDiv.className = 'country-relation';
+                relationDiv.innerHTML = `
+                    <span>${country}</span>
+                    <span class="relation-status relation-${info.relation}">${info.status}</span>
+                `;
+                diplomacyList.appendChild(relationDiv);
+            }
+        }
+
+        // 关闭外交
+        function closeDiplomacy() {
+            document.getElementById('diplomacyModal').style.display = 'none';
+        }
+
+        // 下一回合
+        function nextTurn() {
+            if (!gameState.countryName) {
+                alert('请先创建国家！');
+                return;
+            }
+
+            gameState.turn += 1;
+            gameState.gold += gameState.population * 2;
+            gameState.happiness = Math.max(0, Math.min(100, gameState.happiness + (Math.random() - 0.5) * 10));
+            
+            // 随机事件
+            if (Math.random() < 0.3) {
+                const events = [
+                    '🌾 丰收年！农业产量增加。',
+                    '💹 商路繁荣！贸易收入增加。',
+                    '🌪️ 自然灾害！部分资源损失。',
+                    '👥 人口增长！新公民加入。',
+                    '🔬 科技突破！研究点数增加。'
+                ];
+                const randomEvent = events[Math.floor(Math.random() * events.length)];
+                addEvent(`[第${gameState.turn}回合] ${randomEvent}`);
+            } else {
+                addEvent(`[第${gameState.turn}回合] 📈 国家稳定发展。`);
+            }
+
+            updateDisplay();
+        }
+
+        // 添加事件
+        function addEvent(message) {
+            const eventLog = document.getElementById('eventLog');
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            eventItem.textContent = message;
+            eventLog.appendChild(eventItem);
+            eventLog.scrollTop = eventLog.scrollHeight;
+        }
+
+        // 破解功能
+        function hackGold() {
+            gameState.gold += 1000;
+            updateDisplay();
+            addEvent('🔧 破解：获得1000金币！');
+        }
+
+        function hackArmy() {
+            gameState.army += 100;
+            updateDisplay();
+            addEvent('🔧 破解：获得100军队！');
+        }
+
+        function hackPopulation() {
+            gameState.population += 500;
+            updateDisplay();
+            addEvent('🔧 破解：获得500人口！');
+        }
+    </script>
+</body>
+</html>
