@@ -1,33 +1,362 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <title>留言板 - Rope</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+    <meta charset="UTF-8">
+    <!-- 响应式核心标签 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言板 - Rope</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 导航栏样式：适配手机端汉堡菜单（保留原有结构，增强交互） */
+        nav {
+            background-color: #2c3e50;
+            padding: 1rem 5%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .nav-logo {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .hamburger {
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none; /* 电脑端隐藏汉堡按钮 */
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .nav-menu a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            background-color: #34495e;
+        }
+
+        /* 主体区域样式 */
+        .section {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            width: 80px;
+            height: 3px;
+            background-color: #3498db;
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* 留言提交表单样式 */
+        .message-form {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+        }
+
+        /* 留言展示区域样式 */
+        .message-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .message-card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #3498db;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .message-author {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .message-time {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .message-content {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 返回按钮样式 */
+        .back-btn {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 2rem;
+            padding: 0.8rem 1.5rem;
+            background-color: #e74c3c;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #c0392b;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.2);
+        }
+
+        /* 页脚样式 */
+        footer {
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: auto;
+        }
+
+        /* 响应式适配：手机端 */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
+            .nav-menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: #2c3e50;
+                flex-direction: column;
+                padding: 1rem 5%;
+                gap: 1rem;
+                display: none; /* 默认隐藏 */
+                z-index: 99;
+            }
+
+            .nav-menu.active {
+                display: flex; /* 点击汉堡按钮显示 */
+            }
+
+            .section-title {
+                font-size: 1.7rem;
+            }
+
+            .message-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+    <!-- 引入Font Awesome图标（汉堡按钮用） -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <nav>
-    <div class="nav-logo">RopeuoepoR</div>
-    <div class="hamburger"><i class="fas fa-bars"></i></div>
-    <div class="nav-menu">
-      <a href="index.html">首页</a>
-      <a href="register.html">注册账号</a>
-      <a href="login.html">登录账号</a>
-      <a href="about.html">关于Rope</a>
-      <a href="get-mc/index.html">获取麦块</a>
-      <a href="get-server/index.html">获取伺服器</a>
-      <a href="support/index.html">支持Rope</a>
-    </div>
-  </nav>
+    <nav>
+        <div class="nav-logo">RopeuoepoR</div>
+        <div class="hamburger"><i class="fas fa-bars"></i></div>
+        <div class="nav-menu">
+            <a href="index.html">首页</a>
+            <a href="register.html">注册账号</a>
+            <a href="login.html">登录账号</a>
+            <a href="about.html">关于Rope</a>
+            <a href="get-mc/index.html">获取麦块</a>
+            <a href="get-server/index.html">获取伺服器</a>
+            <a href="support/index.html">支持Rope</a>
+        </div>
+    </nav>
 
-  <main class="section">
-    <h2 class="section-title">留言板</h2>
-    <!-- 后期再升级数据库留言，先空着 -->
-    <p>【后期插入留言功能】</p>
-  </main>
+    <main class="section">
+        <h2 class="section-title">留言板</h2>
+        
+        <!-- 留言提交表单 -->
+        <div class="message-form">
+            <div class="form-group">
+                <label for="msgAuthor">昵称</label>
+                <input type="text" id="msgAuthor" placeholder="请输入你的昵称">
+            </div>
+            <div class="form-group">
+                <label for="msgContent">留言内容</label>
+                <textarea id="msgContent" placeholder="请输入你想留言的内容..."></textarea>
+            </div>
+            <button class="submit-btn" onclick="submitMessage()">提交留言</button>
+        </div>
 
-  <a class="back-btn" href="index.html">返回</a>
-  <footer><p>所有版权都归Rope所有</p></footer>
-  <script src="assets/js/main.js"></script>
+        <!-- 留言展示区域 -->
+        <div class="message-list" id="messageList">
+            <!-- 留言卡片将通过JS动态生成 -->
+        </div>
+    </main>
+
+    <a class="back-btn" href="index.html">返回</a>
+    <footer><p>所有版权都归Rope所有</p></footer>
+
+    <script>
+        // 1. 汉堡菜单交互（手机端）
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // 2. 留言功能：基于localStorage存储
+        function submitMessage() {
+            const author = document.getElementById('msgAuthor').value.trim();
+            const content = document.getElementById('msgContent').value.trim();
+            
+            if (!author || !content) {
+                alert('昵称和留言内容不能为空！');
+                return;
+            }
+
+            // 构造留言对象
+            const message = {
+                author: author,
+                content: content,
+                time: new Date().toLocaleString() // 生成本地时间
+            };
+
+            // 从localStorage获取现有留言，若无则创建空数组
+            let messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.unshift(message); // 新留言添加到最前面
+            localStorage.setItem('messages', JSON.stringify(messages));
+
+            // 清空输入框
+            document.getElementById('msgAuthor').value = '';
+            document.getElementById('msgContent').value = '';
+
+            // 重新渲染留言列表
+            renderMessages();
+        }
+
+        // 渲染留言列表
+        function renderMessages() {
+            const messageList = document.getElementById('messageList');
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+            if (messages.length === 0) {
+                messageList.innerHTML = '<p style="text-align:center; color:#999; padding:2rem;">暂无留言，快来发表第一条留言吧~</p>';
+                return;
+            }
+
+            // 生成留言卡片HTML
+            let html = '';
+            messages.forEach(msg => {
+                html += `
+                    <div class="message-card">
+                        <div class="message-header">
+                            <span class="message-author">${msg.author}</span>
+                            <span class="message-time">${msg.time}</span>
+                        </div>
+                        <div class="message-content">${msg.content}</div>
+                    </div>
+                `;
+            });
+            messageList.innerHTML = html;
+        }
+
+        // 页面加载时渲染留言
+        window.onload = renderMessages;
+    </script>
 </body>
 </html>
